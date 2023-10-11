@@ -93,45 +93,56 @@ class Polygon:
 #    对该点作水平向右的射线，判断射线与多边形的交点个数，如果是奇数个，则在多边形内部，否则在多边形外部
     def IsInside(self,point):
         cnt=0
-        # special用来记录射线与多边形的交点是顶点以及水平边的特殊情况，在special中的边在最简单的情况中不需要再判断
-        special=[]
-        # 考虑到射线与多边形的交点可能是顶点，该情况比较特殊，单独提前判断
-        # 第一种是判断水平边的情况
         for i in range(self.n):
-              # 如果射线与多边形的交点是顶点，则通过判断这个顶点的前后两个边是否位于射线的两侧来确定cnt加多少，同侧加2，两侧加1
-              # 对于水平边，忽视，考虑与水平边相连的两条边是否在射线的两侧，同侧加2，两侧加1
+            if self.points[i%self.n].y == self.points[(i+1)%self.n].y:
+                continue
+            if point.y < min(self.points[i%self.n].y,self.points[(i+1)%self.n].y):
+                continue
+            if point.y >= self.points[i%self.n].y and point.y >= self.points[(i+1)%self.n].y:
+                continue
+            x = (point.y - self.points[i%self.n].y)*(self.points[(i+1)%self.n].x - self.points[i%self.n].x)/(self.points[(i+1)%self.n].y - self.points[i%self.n].y) + self.points[i%self.n].x
+            if x > point.x:
+                cnt+=1
 
-              if point.y == self.points[i%self.n].y and point.y == self.points[(i+1)%self.n].y and point.x < self.points[i%self.n].x and point.x < self.points[(i+1)%self.n].x:
-                    if (self.points[(i-1)%self.n].y - point.y)*(self.points[(i+2)%self.n].y - point.y) > 0:
-                        cnt+=2
-                    else:
-                        cnt+=1
-                    #     记录下有关顶点和边，避免重复计算
-                    special.append(i%self.n)
-                    special.append((i-1)%self.n)
-                    special.append((i+1)%self.n)
-        # 第二种是射线与多边形交点是顶点的情况，但排除了水平边的情况
-        for i in range(self.n):
-            if i not in special:
-                if point.y == self.points[i%self.n].y and point.x < self.points[i%self.n].x:
-                    if (self.points[(i-1)%self.n].y - point.y)*(self.points[(i+1)%self.n].y - point.y) > 0:
-                        cnt+=2
-                    else:
-                        cnt+=1
-                    special.append(i%self.n)
-                    special.append((i-1)%self.n)
-        # 第三种是最简单的情况，射线与多边形的交点不是顶点
-        for i in range(self.n):
-            if i not in special:
-                if self.points[i%self.n].y == self.points[(i+1)%self.n].y:
-                    continue
-                if point.y < min(self.points[i%self.n].y,self.points[(i+1)%self.n].y):
-                    continue
-                if point.y > max(self.points[i%self.n].y,self.points[(i+1)%self.n].y):
-                    continue
-                x = (point.y - self.points[i%self.n].y)*(self.points[(i+1)%self.n].x - self.points[i%self.n].x)/(self.points[(i+1)%self.n].y - self.points[i%self.n].y) + self.points[i%self.n].x
-                if x > point.x:
-                    cnt+=1
+        # # special用来记录射线与多边形的交点是顶点以及水平边的特殊情况，在special中的边在最简单的情况中不需要再判断
+        # special=[]
+        # # 考虑到射线与多边形的交点可能是顶点，该情况比较特殊，单独提前判断
+        # # 第一种是判断水平边的情况
+        # for i in range(self.n):
+        #       # 如果射线与多边形的交点是顶点，则通过判断这个顶点的前后两个边是否位于射线的两侧来确定cnt加多少，同侧加2，两侧加1
+        #       # 对于水平边，忽视，考虑与水平边相连的两条边是否在射线的两侧，同侧加2，两侧加1
+        #
+        #       if point.y == self.points[i%self.n].y and point.y == self.points[(i+1)%self.n].y and point.x < self.points[i%self.n].x and point.x < self.points[(i+1)%self.n].x:
+        #             if (self.points[(i-1)%self.n].y - point.y)*(self.points[(i+2)%self.n].y - point.y) > 0:
+        #                 cnt+=2
+        #             else:
+        #                 cnt+=1
+        #             #     记录下有关顶点和边，避免重复计算
+        #             special.append(i%self.n)
+        #             special.append((i-1)%self.n)
+        #             special.append((i+1)%self.n)
+        # # 第二种是射线与多边形交点是顶点的情况，但排除了水平边的情况
+        # for i in range(self.n):
+        #     if i not in special:
+        #         if point.y == self.points[i%self.n].y and point.x < self.points[i%self.n].x:
+        #             if (self.points[(i-1)%self.n].y - point.y)*(self.points[(i+1)%self.n].y - point.y) > 0:
+        #                 cnt+=2
+        #             else:
+        #                 cnt+=1
+        #             special.append(i%self.n)
+        #             special.append((i-1)%self.n)
+        # # 第三种是最简单的情况，射线与多边形的交点不是顶点
+        # for i in range(self.n):
+        #     if i not in special:
+        #         if self.points[i%self.n].y == self.points[(i+1)%self.n].y:
+        #             continue
+        #         if point.y < min(self.points[i%self.n].y,self.points[(i+1)%self.n].y):
+        #             continue
+        #         if point.y > max(self.points[i%self.n].y,self.points[(i+1)%self.n].y):
+        #             continue
+        #         x = (point.y - self.points[i%self.n].y)*(self.points[(i+1)%self.n].x - self.points[i%self.n].x)/(self.points[(i+1)%self.n].y - self.points[i%self.n].y) + self.points[i%self.n].x
+        #         if x > point.x:
+        #             cnt+=1
         return cnt%2==1
 
 #    TODO：判断两顶点连线是不是对角线
@@ -208,26 +219,26 @@ if __name__ == '__main__':
     #     Point(5, 5)
     # ]
     # i.snake
-    # points = [
-    #     Point(10, 0),
-    #     Point(20, 10),
-    #     Point(30, 0),
-    #     Point(40, 10),
-    #     Point(50, 0),
-    #     Point(50, 10),
-    #     Point(40, 20),
-    #     Point(30, 10),
-    #     Point(20, 20),
-    #     Point(10, 10),
-    #     Point(0, 20),
-    #     Point(0, 10)
-    # ]
-
     points = [
-        Point(0, 0),
         Point(10, 0),
+        Point(20, 10),
+        Point(30, 0),
+        Point(40, 10),
+        Point(50, 0),
+        Point(50, 10),
+        Point(40, 20),
+        Point(30, 10),
+        Point(20, 20),
         Point(10, 10),
+        Point(0, 20),
         Point(0, 10)
     ]
+
+    # points = [
+    #     Point(0, 0),
+    #     Point(10, 0),
+    #     Point(10, 10),
+    #     Point(0, 10)
+    # ]
     polygon=Polygon(points)
     polygon.plotTriangulation()
