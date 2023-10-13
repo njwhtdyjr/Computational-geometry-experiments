@@ -85,8 +85,8 @@ class Polygon:
     #     算多边形的面积
     def area(self):
         area=0
-        for i in range(self.n-1):
-            area+=(self.points[i].x*self.points[i+1].y-self.points[i+1].x*self.points[i].y)/2
+        for i in range(self.n):
+            area+=(self.points[i].x*self.points[(i+1)%self.n].y-self.points[(i+1)%self.n].x*self.points[i].y)/2
         return abs(area)
 #     TODO：判断点是否在多边形内部
 #    判断点是否在多边形内部，不包括边界
@@ -219,20 +219,20 @@ if __name__ == '__main__':
     #     Point(5, 5)
     # ]
     # i.snake
-    points = [
-        Point(10, 0),
-        Point(20, 10),
-        Point(30, 0),
-        Point(40, 10),
-        Point(50, 0),
-        Point(50, 10),
-        Point(40, 20),
-        Point(30, 10),
-        Point(20, 20),
-        Point(10, 10),
-        Point(0, 20),
-        Point(0, 10)
-    ]
+    # points = [
+    #     Point(10, 0),
+    #     Point(20, 10),
+    #     Point(30, 0),
+    #     Point(40, 10),
+    #     Point(50, 0),
+    #     Point(50, 10),
+    #     Point(40, 20),
+    #     Point(30, 10),
+    #     Point(20, 20),
+    #     Point(10, 10),
+    #     Point(0, 20),
+    #     Point(0, 10)
+    # ]
 
     # points = [
     #     Point(0, 0),
@@ -240,5 +240,14 @@ if __name__ == '__main__':
     #     Point(10, 10),
     #     Point(0, 10)
     # ]
+    points = [
+        Point(0, 0),
+        Point(10, 0),
+        Point(20, 0),
+        Point(30, 0),
+        Point(40, 0),
+        Point(20, 10),
+    ]
     polygon=Polygon(points)
+    print(polygon.area())
     polygon.plotTriangulation()
