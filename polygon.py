@@ -23,6 +23,10 @@ def DotProduct(point1,point2):
 def CrossProduct(point1,point2):
     return point1.x*point2.y-point1.y*point2.x
 
+# 判断两条线段是否平行(p1p2,p2p3)
+def IsParallel(point1,point2,point3):
+    return CrossProduct(Point(point2.x-point1.x,point2.y-point1.y),Point(point3.x-point2.x,point3.y-point2.y))==0
+
 # 判断两线段的相对方向
 def Direction(point1,point2,point3):
     d = CrossProduct(Point(point3.x-point1.x,point3.y-point1.y),Point(point2.x-point1.x,point2.y-point1.y))
@@ -176,7 +180,11 @@ class Polygon:
         # 遍历所有的点，找到一个对角线 或者 采用随机化的方法，随机选取一个点，找到一个对角线
         # for i in range(self.n):
         for i in permutation:
-            if self.IsDiagonal(self.points[i % self.n], self.points[(i + 2) % self.n]):
+            # 现在考虑一种新的情况，即出现“平点”（在该点处的内角为180度）的情况
+            if self.IsDiagonal(self.points[i % self.n], self.points[(i + 2) % self.n]) and IsParallel(self.points[i % self.n], self.points[(i + 1) % self.n], self.points[(i + 2) % self.n]) == False:
+                # 还需要考虑四边形有一个平点导致退化成三角形的情况
+                if self.n == 4 and IsParallel(self.points[i % self.n], self.points[(i - 1) % self.n], self.points[(i - 2) % self.n]):
+                    continue
                 diagonal.append(LineSegment(self.points[i % self.n], self.points[(i + 2) % self.n]))
                 # 递归求解剩下的多边形
                 newpoints = []
@@ -233,21 +241,92 @@ if __name__ == '__main__':
     #     Point(0, 20),
     #     Point(0, 10)
     # ]
-
+    # 正方形
     # points = [
     #     Point(0, 0),
     #     Point(10, 0),
     #     Point(10, 10),
     #     Point(0, 10)
     # ]
+    # 带平点的三角形
+    # points = [
+    #     Point(0, 0),
+    #     Point(10, 0),
+    #     Point(20, 0),
+    #     Point(30, 0),
+    #     Point(40, 0),
+    #     Point(20, 10),
+    # ]
+    # 五角星
+    # points = [
+    #     Point(20.0, 0.0),
+    #     Point(8.090169943749475, 5.877852522924732),
+    #     Point(6.180339887498949, 19.02113032590307),
+    #     Point(-3.0901699437494736, 9.510565162951536),
+    #     Point(-16.180339887498945, 11.755705045849465),
+    #     Point(-10.0, 1.2246467991473533e-15),
+    #     Point(-16.18033988749895, -11.75570504584946),
+    #     Point(-3.0901699437494754, -9.510565162951535),
+    #     Point(6.180339887498945, -19.021130325903073),
+    #     Point(8.090169943749473, -5.877852522924734),
+    # ]
+    # 六边形
+    # points = [
+    #     Point(17.320508075688775, 9.999999999999998),
+    #     Point(17.32050807568877, -10.000000000000002),
+    #     Point(3.673940397442059e-15, -20.0),
+    #     Point(-17.320508075688767, -10.000000000000009),
+    #     Point(-17.32050807568877, 10.0),
+    #     Point(-6.123233995736766e-15, 20.0)
+    #
+    #
+    # ]
+    # 特殊的多边形
     points = [
         Point(0, 0),
-        Point(10, 0),
-        Point(20, 0),
-        Point(30, 0),
-        Point(40, 0),
-        Point(20, 10),
+        Point(50, 0),
+        Point(50, 30),
+        Point(40, 30),
+        Point(40, 20),
+        Point(30, 20),
+        Point(30, 30),
+        Point(20, 30),
+        Point(20, 20),
+        Point(10, 20),
+        Point(10, 30),
+        Point(0, 30)
     ]
+    #
+    # points = [
+    #     Point(0, 0),
+    #     Point(1, 0.3),
+    #     Point(0.7, 0.7),
+    #     Point(1, 1),
+    #     Point(0.7, 1.3),
+    #     Point(0.3, 0.7),
+    #     Point(0.3, 1),
+    #     Point(0, 1),
+    #     Point(-0.3, 0.7),
+    #     Point(-0.7, 1),
+    #     Point(-1, 1.3),
+    #     Point(-1, 0.7),
+    # ]
+    # 六角星
+    # points = [
+    #     Point(6, 3),
+    #     Point(7, 4),
+    #     Point(9, 4),
+    #     Point(7.5, 5.5),
+    #     Point(9, 7),
+    #     Point(7, 7),
+    #     Point(6, 8),
+    #     Point(5, 7),
+    #     Point(3, 7),
+    #     Point(4.5, 5.5),
+    #     Point(3, 4),
+    #     Point(5, 4)
+    # ]
     polygon=Polygon(points)
     print(polygon.area())
+    # polygon.plot()
     polygon.plotTriangulation()
